@@ -1,0 +1,60 @@
+
+import threading
+
+def merging(arr12, q, w, e):
+    # Find sizes of two subarrays to be merged
+    n1 = w - q + 1
+    n2 = e - w
+    #Making temporaru arrays
+    L = [0] * n1
+    M = [0] * n2
+
+    for i in range(0, n1):
+        L[i] = arr12[q + i]
+
+    for j in range(0, n2):
+        M[j] = arr12[w + 1 + j]
+
+    #Merge temp array into real array
+    i = 0  # 1st index of 1st subarray
+    j = 0 
+    k = q 
+
+    while i < n1 and j < n2:
+        if L[i] <= M[j]:
+            arr12[k] = L[i]
+            i += 1
+        else:
+            arr12[k] = M[j]
+            j += 1
+        k += 1
+
+    #  remaining elements of L[]
+    while i < n1:
+        arr12[k] = L[i]
+        i += 1
+        k += 1
+    #Remaining elements of M[]
+    while j < n2:
+        arr12[k] = M[j]
+        j += 1
+        k += 1
+
+def merge_sort(arr, l, r):
+    if l < r:
+        m = (l + (r - 1)) // 2
+
+        # As my PC is 2 cores so 2 threads will be formed.
+        t1 = threading.Thread(target=merge_sort, args=(arr, l, m))
+        t2 = threading.Thread(target=merge_sort, args=(arr, m + 1, r))
+
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+
+        merging(arr, l, m, r)
+
+array1 = [54, 41, 75, 11, 3, 23, 6]
+merge_sort(array1, 0, len(array1) - 1)
+print("The sorted array will be: ",array1)
